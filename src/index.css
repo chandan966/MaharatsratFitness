@@ -1,0 +1,89 @@
+:root{
+  --brand:#2563eb; /* blue-600 */
+  --brand-500:#3b82f6;
+  --brand-700:#1d4ed8;
+  --bg:#ffffff;
+  --text:#0b1220;
+  --muted:#6b7280;
+  --card:#f8fafc;
+  --ring: rgba(37, 99, 235, .4);
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, "Noto Color Emoji", sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(800px 500px at 85% -10%, rgba(37,99,235,.07), transparent 60%),
+    radial-gradient(700px 400px at 10% 110%, rgba(59,130,246,.08), transparent 60%),
+    var(--bg);
+}
+
+a{color:inherit;text-decoration:none}
+ul{margin:0;padding:0;list-style:none}
+
+.container{max-width:1100px;margin:auto;padding:20px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:14px;
+  border:1px solid #e5e7eb;background:#fff;
+  box-shadow:0 1px 0 0 rgba(0,0,0,.02);
+  cursor:pointer;font-weight:600;
+  transition:.2s ease;
+}
+.btn.primary{
+  background:linear-gradient(180deg,var(--brand),var(--brand-700));
+  border-color: transparent;
+  color:white;
+}
+.btn.ghost{background:white;border-color:#e5e7eb}
+.btn:hover{transform:translateY(-1px)}
+.badge{font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(37,99,235,.1);color:var(--brand)}
+.chip{font-size:12px;padding:4px 10px;border-radius:999px;background:#eef2ff;color:#3730a3}
+
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.7);
+  backdrop-filter:saturate(180%) blur(10px);
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav ul{display:flex;gap:14px;align-items:center}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800}
+.logo-mark{
+  width:36px;height:36px;border-radius:10px;
+  background: radial-gradient(80% 90% at 20% 10%, #93c5fd, transparent),
+              linear-gradient(140deg, var(--brand), var(--brand-700));
+  box-shadow: inset 0 0 14px rgba(255,255,255,.3),
+              0 10px 30px rgba(37,99,235,.25);
+}
+
+.hero{
+  padding:40px 0 20px 0;
+  display:grid;grid-template-columns: 1.1fr .9fr;gap:30px;align-items:center;
+}
+@media (max-width:900px){ .hero{grid-template-columns:1fr} }
+
+.card{
+  background: var(--card);
+  border:1px solid #e5e7eb;
+  padding:18px;border-radius:18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.04);
+}
+
+.grid{display:grid;grid-template-columns: repeat(3, 1fr);gap:16px}
+@media (max-width:900px){ .grid{grid-template-columns:1fr 1fr} }
+@media (max-width:640px){ .grid{grid-template-columns:1fr} }
+
+.input, select, textarea{
+  width:100%;padding:12px 14px;border-radius:12px;border:1px solid #e5e7eb;
+  outline:none;transition:.2s; background:white;
+}
+.input:focus, select:focus, textarea:focus{box-shadow:0 0 0 6px var(--ring);}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:800px){ .form-row{grid-template-columns:1fr} }
+
+.footer{margin-top:40px;padding:30px 0;border-top:1px solid rgba(0,0,0,.08);color:var(--muted);font-size:14px}
