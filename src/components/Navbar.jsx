@@ -7,7 +7,7 @@ export default function Navbar(){
     <header style={{display:'flex',alignItems:'center',gap:14,width:'100%'}}>
       <Link to="/" className="logo">
         <span className="logo-mark"></span>
-        <span>CarRental</span>
+        <span>Car-rental</span>
       </Link>
 
       <nav style={{marginLeft:'auto'}}>
