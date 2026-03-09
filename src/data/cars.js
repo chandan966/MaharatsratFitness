@@ -10,7 +10,7 @@ const cars = [
     price: 980000,
     image: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a'
   },
-
+  
   {
     id: '2',
     type: 'buy',
@@ -20,7 +20,7 @@ const cars = [
     fuel: 'Petrol',
     transmission: 'Manual',
     price: 750000,
-    image: 'https://images.unsplash.com/photo-1549921296-3c3bdf4d2f54'
+    image:  'https://images.unsplash.com/photo-1549924231-f129b911e442'
   },
 
   {
