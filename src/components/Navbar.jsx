@@ -1,11 +1,13 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+// import logo from '../../assets/images/png1.png'
+import logo from "../assets/images/png1.png";
 
 export default function Navbar(){
   const { user, logout } = useAuth()
   return (
     <header style={{display:'flex',alignItems:'center',gap:14,width:'100%'}}>
-      <Link to="/" className="logo">
+      <Link to="png1.jpg" className="logo">
         <span className="logo-mark"></span>
         <span>Car-rental</span>
       </Link>

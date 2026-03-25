@@ -12,6 +12,7 @@ import Profile from './pages/Profile.jsx'
 import Booking from './pages/Booking.jsx'
 import NotFound from './pages/NotFound.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import logo from "./assets/images/png1.png";
 
 
 export default function App(){
@@ -35,7 +36,8 @@ export default function App(){
           <Route path="/profile" element={<Profile/>} />
           <Route path="/booking/:id" element={<Booking/>} />
           <Route path="*" element={<NotFound/>} />
-    
+          
+
         </Routes>
       </main>
 
