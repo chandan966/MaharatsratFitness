@@ -1,105 +1,35 @@
-# CarRental — Buy | Sell | Rent Cars
+# Crea Maharatsrat Fitness
 
-A modern, responsive car marketplace built with **React + Vite**, where users can:
-- Buy cars
-- Sell cars
-- Rent cars
-- View services
-- Book a car online
-- Manage their profile & listings
+Full-stack gym platform starter: Next.js frontend, Express REST API, Prisma ORM, and PostgreSQL.
 
-**Tech Stack:** React, Vite, Tailwind CSS, LocalStorage (for demo authentication & listings)
+## Requirements
 
----
+- Node.js 20.9 or newer
+- npm 10 or newer
+- Docker Desktop, or a PostgreSQL 16 server
 
-## 🚗 Features
+## Local setup
 
-### **Home Page**
-- Hero banner with blue & white theme
-- Featured car cards
-- Quick navigation to Buy, Sell, Rent
+1. Copy apps/api/.env.example to apps/api/.env and apps/web/.env.example to apps/web/.env.local.
+2. Start PostgreSQL with docker compose up -d postgres.
+3. Install the web and API packages with npm run install:all.
+4. Generate Prisma client with npm run db:generate.
+5. Apply the checked-in schema migration with npm run db:migrate.
+6. Load starter plans, programs, trainers, classes, and upcoming times with npm run db:seed.
+7. Start both services with npm run dev.
 
-### **Buy Cars**
-- List of available cars with details
-- Search & filter functionality
+The website runs at http://localhost:3000 and the API at http://localhost:4000. API health check: http://localhost:4000/api/health.
 
-### **Sell Cars**
-- Post your own car for sale
-- Fields: Brand, Model, Price, Image URL
-- Data stored locally for demo
+## Integrations
 
-### **Rent Cars**
-- Available cars for rent
-- Booking option for each
+Environment examples contain local development values only. Keep real secrets in private .env files. Razorpay, Google OAuth, email, media storage, and production deployment credentials are left for the owner to configure.
 
-### **Booking Page**
-- Shows selected car details
-- Booking form: Pickup Date, Return Date, Pickup Location, Contact
-- Confirmation message after booking
+## Foundation included
 
-### **Services Page**
-- Car servicing, insurance, and maintenance offers
+- Public pages for the gym, programs, trainers, memberships, class schedule, and contact.
+- Member registration/login with password hashing and an HTTP-only JWT cookie.
+- PostgreSQL models for users/roles, trainers, plans/subscriptions, programs/classes/schedules/bookings, attendance, workouts, progress, payments/invoices, reviews, coupons, notifications, gallery, contact, and admin logs.
+- Public read endpoints for plans, programs, trainers, and schedules, plus authenticated booking and contact endpoints.
+- Seed data for local development.
 
-### **Authentication**
-- Login / Signup with LocalStorage
-- Profile page to manage user data
-
----
-
-## 🛠️ Installation & Setup
-
-### **1. Clone or Download**
-Unzip the project or clone it from your repository.
-
-```bash
-cd car-rental-react
-
-
-
-2. Install dependencies
-
-Make sure you have Node.js (v18+) installed.
-
-npm install
-
-3. Run Development Server
-npm run dev
-
-
-Open the URL shown in the terminal (e.g., http://localhost:5173).
-
-4. Build for Production
-npm run build
-npm run preview
-
-📂 Project Structure
-car-rental-react/
-├── public/             # Static assets
-├── src/
-│   ├── components/     # Reusable components
-│   ├── pages/          # Page components (Home, Buy, Sell, Rent, Booking, Profile)
-│   ├── App.jsx         # App entry point
-│   ├── main.jsx        # React DOM render
-│   └── styles.css      # Tailwind & custom styles
-├── package.json        # Project config & dependencies
-├── vite.config.js      # Vite config
-└── README.md           # Project documentation
-
-🎨 Design
-
-Theme: Blue + White, clean, modern
-
-Fully responsive: works on mobile, tablet, desktop
-
-Rounded cards, smooth hover effects
-
-🔮 Future Improvements
-
-Backend integration (Node.js + MongoDB or Firebase)
-
-Real payment gateway for rentals
-           
-Admin dashboard
-
-User profile picture & advanced settings
-
+Local seed admin: admin@creafitness.local / CreaDev!2026. This password is for local development only; change it before sharing the database. Docker is optional if you already have PostgreSQL.

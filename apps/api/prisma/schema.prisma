@@ -1,0 +1,366 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MEMBER
+  TRAINER
+  ADMIN
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  PAUSED
+  EXPIRED
+  CANCELLED
+}
+
+enum BookingStatus {
+  BOOKED
+  CANCELLED
+  ATTENDED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
+}
+
+model User {
+  id             String                  @id @default(cuid())
+  name           String
+  email          String                  @unique
+  passwordHash   String
+  role           Role                    @default(MEMBER)
+  phone          String?
+  trainerProfile Trainer?
+  subscriptions  MembershipSubscription[]
+  bookings       Booking[]
+  payments       Payment[]
+  workoutPlans   WorkoutPlan[]           @relation("MemberWorkoutPlans")
+  progress       ProgressEntry[]
+  reviews        Review[]
+  notifications  Notification[]
+  couponUses     CouponRedemption[]
+  adminLogs      AdminLog[]              @relation("AdminActor")
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+
+  @@index([role, createdAt])
+}
+
+model Trainer {
+  id             String        @id @default(cuid())
+  userId         String?       @unique
+  slug           String        @unique
+  name           String
+  title          String
+  bio            String        @db.Text
+  specializations String[]
+  certifications String[]
+  experienceYears Int
+  rating         Float         @default(5)
+  clientCount    Int           @default(0)
+  imageUrl       String?
+  isActive       Boolean       @default(true)
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  classes        FitnessClass[]
+  workoutPlans   WorkoutPlan[]
+  reviews        Review[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([isActive, name])
+}
+
+model MembershipPlan {
+  id                   String                   @id @default(cuid())
+  slug                 String                   @unique
+  name                 String
+  description          String
+  monthlyPricePaise    Int
+  yearlyPricePaise     Int
+  features             String[]
+  isFeatured           Boolean                  @default(false)
+  isActive             Boolean                  @default(true)
+  subscriptions        MembershipSubscription[]
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+}
+
+model MembershipSubscription {
+  id          String             @id @default(cuid())
+  userId      String
+  planId      String
+  status      SubscriptionStatus @default(PENDING)
+  startsAt    DateTime?
+  endsAt      DateTime?
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan        MembershipPlan     @relation(fields: [planId], references: [id], onDelete: Restrict)
+  payments    Payment[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([userId, status])
+  @@index([endsAt])
+}
+
+model Program {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  name            String
+  description     String        @db.Text
+  level           String
+  durationMinutes Int
+  imageUrl        String?
+  isActive        Boolean       @default(true)
+  classes         FitnessClass[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model FitnessClass {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  name        String
+  description String
+  level       String
+  programId   String
+  trainerId   String
+  program     Program         @relation(fields: [programId], references: [id], onDelete: Restrict)
+  trainer     Trainer         @relation(fields: [trainerId], references: [id], onDelete: Restrict)
+  schedules   ClassSchedule[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([programId, trainerId])
+}
+
+model ClassSchedule {
+  id             String     @id @default(cuid())
+  fitnessClassId String
+  startsAt       DateTime
+  endsAt         DateTime
+  capacity       Int        @default(20)
+  bookingsCount  Int        @default(0)
+  room           String?
+  fitnessClass   FitnessClass @relation(fields: [fitnessClassId], references: [id], onDelete: Cascade)
+  bookings       Booking[]
+  createdAt      DateTime   @default(now())
+
+  @@unique([fitnessClassId, startsAt])
+  @@index([startsAt])
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  memberId   String
+  scheduleId String
+  status     BookingStatus @default(BOOKED)
+  member     User          @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  schedule   ClassSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  attendance Attendance?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([memberId, scheduleId])
+  @@index([memberId, createdAt])
+}
+
+model Attendance {
+  id          String   @id @default(cuid())
+  bookingId   String   @unique
+  checkedInAt DateTime @default(now())
+  markedBy    String?
+  notes       String?
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model WorkoutPlan {
+  id          String            @id @default(cuid())
+  memberId    String
+  trainerId   String?
+  name        String
+  notes       String?           @db.Text
+  startsAt    DateTime?
+  endsAt      DateTime?
+  isActive    Boolean           @default(true)
+  member      User              @relation("MemberWorkoutPlans", fields: [memberId], references: [id], onDelete: Cascade)
+  trainer     Trainer?          @relation(fields: [trainerId], references: [id], onDelete: SetNull)
+  exercises   WorkoutExercise[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([memberId, isActive])
+}
+
+model WorkoutExercise {
+  id            String     @id @default(cuid())
+  workoutPlanId String
+  name          String
+  dayLabel      String?
+  sets          Int
+  reps          String
+  restSeconds   Int?
+  instructions  String?    @db.Text
+  videoUrl      String?
+  sortOrder     Int        @default(0)
+  workoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
+
+  @@index([workoutPlanId, sortOrder])
+}
+
+model ProgressEntry {
+  id                String   @id @default(cuid())
+  userId            String
+  recordedAt         DateTime @default(now())
+  weightKg           Float?
+  bodyFatPercent     Float?
+  chestCm            Float?
+  waistCm            Float?
+  hipsCm             Float?
+  notes              String?  @db.Text
+  photoUrl           String?
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, recordedAt])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  subscriptionId    String?
+  amountPaise       Int
+  currency          String        @default("INR")
+  status            PaymentStatus @default(CREATED)
+  provider           String?
+  providerOrderId    String?       @unique
+  providerPaymentId  String?       @unique
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription       MembershipSubscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  invoice            Invoice?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+model Invoice {
+  id          String   @id @default(cuid())
+  paymentId   String   @unique
+  invoiceNo   String   @unique
+  issuedAt    DateTime @default(now())
+  fileUrl     String?
+  payment     Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  memberId   String
+  trainerId  String?
+  rating     Int
+  message    String   @db.Text
+  isApproved Boolean  @default(false)
+  member     User     @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  trainer    Trainer? @relation(fields: [trainerId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+
+  @@index([isApproved, createdAt])
+}
+
+model GalleryImage {
+  id         String   @id @default(cuid())
+  title      String
+  category   String
+  imageUrl   String
+  altText    String
+  sortOrder  Int      @default(0)
+  isPublished Boolean @default(true)
+  createdAt  DateTime @default(now())
+
+  @@index([isPublished, category, sortOrder])
+}
+
+model Coupon {
+  id              String            @id @default(cuid())
+  code            String            @unique
+  type            CouponType
+  value           Int
+  minimumPaise    Int               @default(0)
+  startsAt        DateTime?
+  expiresAt       DateTime?
+  usageLimit      Int?
+  usageCount      Int               @default(0)
+  isActive        Boolean           @default(true)
+  redemptions     CouponRedemption[]
+  createdAt       DateTime          @default(now())
+
+  @@index([isActive, expiresAt])
+}
+
+model CouponRedemption {
+  id        String   @id @default(cuid())
+  couponId  String
+  userId    String
+  usedAt    DateTime @default(now())
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([couponId, userId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  readAt    DateTime?
+  link      String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId, readAt, createdAt])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String   @db.Text
+  repliedAt DateTime?
+  reply     String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model AdminLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  actor     User?    @relation("AdminActor", fields: [actorId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@index([actorId, createdAt])
+}
