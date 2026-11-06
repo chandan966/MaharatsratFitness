@@ -6,14 +6,14 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const node = process.execPath;
 const jobs = [
   {
-    name: "API",
-    cwd: path.join(root, "apps/api"),
-    args: [path.join(root, "node_modules/tsx/dist/cli.mjs"), "watch", "src/index.ts"]
+    name: "Gym web",
+    cwd: path.join(root, "apps/web"),
+    args: [path.join(root, "node_modules/next/dist/bin/next"), "dev", "--hostname", "0.0.0.0"]
   },
   {
-    name: "web",
-    cwd: path.join(root, "apps/web"),
-    args: [path.join(root, "apps/web/node_modules/next/dist/bin/next"), "dev", "--hostname", "0.0.0.0"]
+    name: "Fitness API",
+    cwd: path.join(root, "apps/api"),
+    args: [path.join(root, "node_modules/tsx/dist/cli.mjs"), "watch", "src/index.ts"]
   }
 ];
 const children = jobs.map((job) => {
